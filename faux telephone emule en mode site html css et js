@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyPhone OS</title>
+<style>
+/* ═══════════════════════════════════════════════════
+   iOS 17 INSPIRED DESIGN — Premium Glassmorphism
+   ═══════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap');
+
+:root {
+    --accent: #007aff;
+    --accent2: #5856d6;
+    --bg: #000000;
+    --card: rgba(255,255,255,.12);
+    --card2: rgba(255,255,255,.08);
+    --card3: rgba(255,255,255,.05);
+    --text: #ffffff;
+    --text2: rgba(255,255,255,.8);
+    --muted: rgba(255,255,255,.5);
+    --danger: #ff3b30;
+    --success: #34c759;
+    --orange: #ff9500;
+    --yellow: #ffcc00;
+    --phone-width: 393px;
+    --phone-height: 852px;
+    --safe-top: 59px;
+    --safe-bottom: 34px;
+    --radius: 20px;
+    --radius-lg: 28px;
+    --radius-xl: 44px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: radial-gradient(circle at 25% 15%, #1a2a6c, transparent 40%),
+                radial-gradient(circle at 75% 85%, #3a1c5a, transparent 40%),
+                radial-gradient(circle at 50% 50%, #0d1b2a, #05070a 80%);
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
+    color: var(--text);
+    overflow:hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Device Body ─────────────────────────────────── */
+.phone {
+    width:var(--phone-width); height:var(--phone-height);
+    position:relative; overflow:hidden; border-radius:54px;
+    background:#0a0a0e;
+    box-shadow:
+        0 0 0 2px rgba(255,255,255,.08),
+        0 30px 80px rgba(0,0,0,.9),
+        0 0 0 1px rgba(255,255,255,.05),
+        inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.screen {
+    position:absolute; inset:0; overflow:hidden;
+    background: linear-gradient(160deg, #0f1840 0%, #201248 40%, #0c0e1a 100%);
+}
+.wallpaper {
+    position:absolute; inset:0;
+    background:
+        radial-gradient(ellipse 70% 50% at 15% 20%, rgba(0,180,255,.35), transparent 50%),
+        radial-gradient(ellipse 60% 60% at 85% 70%, rgba(130,60,255,.35), transparent 50%),
+        radial-gradient(ellipse 40% 40% at 50% 90%, rgba(255,80,150,.15), transparent 50%),
+        linear-gradient(165deg, #0b1240 0%, #21144c 35%, #0e0b1a 100%);
+    transition: .4s ease;
+}
+
+/* ── Dynamic Island ──────────────────────────────── */
+.dynamic-island {
+    position:absolute; z-index:100; top:11px; left:50%; transform:translateX(-50%);
+    width:126px; height:36px; background:#000; border-radius:20px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.06);
+    display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.dynamic-island .sensor {
+    width:10px; height:10px; border-radius:50%; background:rgba(30,30,60,.9);
+    box-shadow: inset 0 0 4px rgba(0,0,0,.5);
+}
+.dynamic-island .camera-dot {
+    width:10px; height:10px; border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #2a1a3a, #0a0a12);
+    border:1px solid rgba(255,255,255,.05);
+}
+
+/* ── Status Bar ──────────────────────────────────── */
+.statusbar {
+    position:absolute; z-index:90; top:0; left:0; right:0; height:var(--safe-top);
+    padding:16px 32px 0; display:flex; justify-content:space-between;
+    align-items:flex-start; font-size:14px; font-weight:600;
+    letter-spacing:0.2px; pointer-events:none;
+}
+.status-icons { display:flex; gap:6px; align-items:center; }
+.status-icons span { font-size:13px; opacity:.9; }
+.battery {
+    width:25px; height:12px; border:1.5px solid rgba(255,255,255,.85);
+    border-radius:4px; position:relative; margin-left:2px;
+}
+.battery::after {
+    content:""; position:absolute; right:-5px; top:3px;
+    width:4px; height:6px; background:rgba(255,255,255,.85); border-radius:0 2px 2px 0;
+}
+.battery-level {
+    position:absolute; inset:1.5px; width:72%;
+    background:linear-gradient(180deg, #34c759, #28a745); border-radius:1px;
+}
+
+/* ── Lock Screen ─────────────────────────────────── */
+.lock-screen {
+    position:absolute; inset:0; z-index:70;
+    display:flex; flex-direction:column; align-items:center; padding-top:140px;
+    background:rgba(0,0,0,.15);
+    backdrop-filter:blur(2px);
+    transition: transform .5s cubic-bezier(.32,.72,0,1), opacity .4s ease;
+}
+.lock-screen.hidden {
+    transform:translateY(-100%);
+    opacity:0;
+}
+.lock-screen .lock-icon {
+    font-size:36px; margin-bottom:20px; opacity:.8;
+    width:80px; height:80px; background:rgba(255,255,255,.08);
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    backdrop-filter:blur(10px);
+}
+.lock-time { font-size:82px; font-weight:200; letter-spacing:-6px; line-height:1; }
+.lock-date { color:var(--text2); margin-top:8px; font-size:16px; font-weight:400; letter-spacing:0.3px; }
+.lock-footer {
+    margin-top:auto; margin-bottom:80px; display:flex; flex-direction:column; align-items:center; gap:20px;
+}
+.lock-footer .unlock-hint {
+    color:rgba(255,255,255,.6); font-size:13px; font-weight:400;
+    letter-spacing:0.5px; animation:pulse 2.5s infinite;
+}
+.lock-footer .lock-shortcut {
+    display:flex; gap:30px;
+}
+.lock-footer .lock-shortcut button {
+    width:50px; height:50px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.12); backdrop-filter:blur(10px);
+    color:white; font-size:22px; cursor:pointer;
+    transition:.15s;
+}
+.lock-footer .lock-shortcut button:active { transform:scale(.85); }
+
+@keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:.85} }
+
+/* ── Home Screen ─────────────────────────────────── */
+.home {
+    position:absolute; inset:0; padding:68px 20px 95px; overflow-y:auto;
+    scroll-behavior:smooth;
+}
+.home::-webkit-scrollbar { display:none; }
+
+/* Date widget (top) */
+.date-widget {
+    padding:4px 0 16px; text-align:center;
+}
+.date-widget .dow { font-size:14px; font-weight:500; color:var(--text2); letter-spacing:0.3px; }
+.date-widget .daynum { font-size:44px; font-weight:200; letter-spacing:-2px; margin-top:-2px; }
+
+/* App grid */
+.apps {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:24px 8px;
+    padding:4px 0;
+}
+.app {
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+}
+.app-icon {
+    width:64px; height:64px;
+    display:flex; justify-content:center; align-items:center;
+    border-radius:16px; font-size:28px;
+    background:rgba(255,255,255,.1);
+    backdrop-filter:blur(4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,.15), inset 0 0 0 0.5px rgba(255,255,255,.03);
+    transition: transform .12s cubic-bezier(.4,0,.2,1), box-shadow .12s;
+}
+.app:active .app-icon { transform:scale(.88); box-shadow:0 2px 6px rgba(0,0,0,.2); }
+.app-name {
+    font-size:11px; font-weight:500; color:var(--text2);
+    text-shadow:0 1px 4px rgba(0,0,0,.3);
+    max-width:68px; text-align:center; line-height:1.2;
+}
+
+/* ── App icon themes ─────────────────────────────── */
+.phone-icon { background:linear-gradient(135deg,#34c759,#1a8d3a) !important; }
+.message-icon { background:linear-gradient(135deg,#34c759,#1a8d3a) !important; }
+.browser-icon { background:linear-gradient(135deg,#007aff,#0040dd) !important; }
+.camera-icon { background:linear-gradient(135deg,#8e8e93,#48484a) !important; }
+.settings-icon { background:linear-gradient(135deg,#636366,#2c2c2e) !important; }
+.music-icon { background:linear-gradient(135deg,#ff2d55,#b71a3a) !important; }
+.notes-icon { background:linear-gradient(135deg,#ffcc00,#b38600) !important; }
+.gallery-icon { background:linear-gradient(135deg,#00c7be,#007a75) !important; }
+.calc-icon { background:linear-gradient(135deg,#56565c,#2c2c2e) !important; }
+.contacts-icon { background:linear-gradient(135deg,#007aff,#0040dd) !important; }
+.clock-icon { background:linear-gradient(135deg,#1c1c1e,#2c2c2e) !important; }
+.weather-icon { background:linear-gradient(135deg,#54c7ff,#0073d0) !important; }
+.game-icon1 { background:linear-gradient(135deg,#ff453a,#8b1a12) !important; }
+.game-icon2 { background:linear-gradient(135deg,#ff9f0a,#b36600) !important; }
+.game-icon3 { background:linear-gradient(135deg,#30d158,#1a7a33) !important; }
+
+/* ── Dock ────────────────────────────────────────── */
+.dock {
+    position:absolute; left:12px; right:12px; bottom:12px; height:80px;
+    display:flex; justify-content:space-evenly; align-items:center;
+    border-radius:30px;
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(30px) saturate(1.4);
+    box-shadow: 0 0 0 0.5px rgba(255,255,255,.06), 0 8px 32px rgba(0,0,0,.3);
+}
+.dock .app { gap:0; }
+.dock .app-icon { width:58px; height:58px; font-size:24px; border-radius:14px; }
+
+/* ── App Window ──────────────────────────────────── */
+.app-window {
+    position:absolute; inset:0; z-index:50; display:none;
+    background:rgba(10,10,14,.98);
+    backdrop-filter:blur(40px);
+    animation: appOpen .3s cubic-bezier(.32,.72,0,1);
+}
+.app-window.active { display:flex; flex-direction:column; }
+
+@keyframes appOpen {
+    from { transform:scale(.92) translateY(8px); opacity:0; }
+    to { transform:scale(1) translateY(0); opacity:1; }
+}
+
+.app-header {
+    height:62px; padding:28px 16px 8px;
+    display:flex; align-items:center; gap:10px;
+    background:rgba(255,255,255,.04);
+    border-bottom: 0.5px solid rgba(255,255,255,.06);
+}
+.back {
+    width:36px; height:36px; border:none; border-radius:50%;
+    background:rgba(255,255,255,.08); color:var(--accent);
+    font-size:22px; font-weight:600; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:.12s;
+}
+.back:active { transform:scale(.88); background:rgba(255,255,255,.14); }
+.app-header h2 { font-size:18px; font-weight:600; }
+.app-content {
+    flex:1; overflow-y:auto; padding:16px;
+    -webkit-overflow-scrolling:touch;
+}
+.app-content::-webkit-scrollbar { width:3px; }
+.app-content::-webkit-scrollbar-thumb { background:rgba(255,255,255,.15); border-radius:4px; }
+
+/* ── Dialer ──────────────────────────────────────── */
+.dial-display {
+    height:70px; display:flex; justify-content:center; align-items:center;
+    font-size:32px; letter-spacing:4px; font-weight:300;
+}
+.dial-grid {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:10px; max-width:280px; margin:0 auto;
+}
+.dial-btn {
+    height:64px; border:none; border-radius:50%;
+    background:rgba(255,255,255,.06); color:white;
+    font-size:24px; font-weight:400; cursor:pointer;
+    transition:.12s;
+    backdrop-filter:blur(4px);
+}
+.dial-btn:active { background:rgba(255,255,255,.14); transform:scale(.92); }
+.dial-btn.sub { font-size:11px; letter-spacing:1px; color:var(--muted); }
+.call-btn {
+    margin:16px auto; display:block; width:64px; height:64px;
+    border:none; border-radius:50%;
+    background:linear-gradient(135deg,#34c759,#28a745);
+    font-size:26px; cursor:pointer;
+    box-shadow:0 4px 16px rgba(52,199,89,.3);
+    transition:.12s;
+}
+.call-btn:active { transform:scale(.88); }
+
+/* ── Messages ────────────────────────────────────── */
+.chat { display:flex; flex-direction:column; gap:8px; padding-bottom:12px; }
+.bubble {
+    max-width:80%; padding:10px 14px; border-radius:18px;
+    background:rgba(255,255,255,.08); font-size:15px; line-height:1.4;
+    align-self:flex-start;
+    border-bottom-left-radius:4px;
+}
+.bubble.me {
+    align-self:flex-end; background:var(--accent);
+    border-bottom-right-radius:4px;
+    border-bottom-left-radius:18px;
+}
+.message-input {
+    display:flex; gap:8px; padding:10px 0 4px;
+    border-top:0.5px solid rgba(255,255,255,.06);
+}
+.message-input input {
+    flex:1; padding:12px 16px; border:none; border-radius:24px;
+    background:rgba(255,255,255,.06); color:white; font-size:15px; outline:none;
+}
+.message-input input::placeholder { color:var(--muted); }
+.message-input button {
+    width:44px; height:44px; border:none; border-radius:50%;
+    background:var(--accent); color:white; font-size:18px; cursor:pointer;
+}
+
+/* ── Calculator ──────────────────────────────────── */
+.calc-display {
+    height:90px; display:flex; align-items:flex-end; justify-content:flex-end;
+    padding:12px 8px; font-size:44px; font-weight:200; letter-spacing:-1px;
+    background:rgba(0,0,0,.15); border-radius:16px; overflow:hidden;
+}
+.calc-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.calc-btn {
+    height:62px; border:none; border-radius:16px;
+    background:rgba(255,255,255,.06); color:white;
+    font-size:22px; font-weight:400; cursor:pointer;
+    transition:.12s;
+}
+.calc-btn:active { transform:scale(.92); background:rgba(255,255,255,.12); }
+.calc-btn.operator { background:var(--orange); color:white; }
+.calc-btn.operator:active { background:#e68a00; }
+.calc-btn.equal { background:var(--orange); }
+.calc-btn.equal:active { background:#e68a00; }
+.calc-btn.extra { background:rgba(255,255,255,.12); color:white; }
+
+/* ── Notes ───────────────────────────────────────── */
+.notes textarea {
+    width:100%; min-height:460px; resize:none; padding:16px;
+    border:none; outline:none; border-radius:16px;
+    background:rgba(255,255,255,.04); color:#f0e6c0;
+    font-size:16px; line-height:1.6; font-family:'Inter', sans-serif;
+}
+.notes textarea::placeholder { color:var(--muted); }
+.save-note {
+    width:100%; padding:14px; margin-top:10px;
+    border:none; border-radius:14px;
+    background:var(--accent); color:white; font-size:16px; font-weight:500;
+    cursor:pointer; transition:.12s;
+}
+.save-note:active { transform:scale(.97); opacity:.8; }
+
+/* ── Browser ─────────────────────────────────────── */
+.browser-bar { display:flex; gap:8px; margin-bottom:14px; }
+.browser-bar input {
+    flex:1; padding:12px 16px; border:none; border-radius:14px;
+    background:rgba(255,255,255,.06); color:white; font-size:14px; outline:none;
+}
+.browser-bar input::placeholder { color:var(--muted); }
+.browser-bar button {
+    border:none; border-radius:14px; padding:0 16px;
+    background:var(--accent); color:white; font-size:16px; cursor:pointer;
+}
+.browser-page {
+    min-height:460px; border-radius:16px; padding:24px;
+    background:white; color:#111;
+}
+
+/* ── Camera ──────────────────────────────────────── */
+.camera-view {
+    height:520px; border-radius:24px; position:relative; overflow:hidden;
+    background:
+        radial-gradient(ellipse 60% 40% at 70% 30%, #ffbc69, transparent 30%),
+        linear-gradient(145deg, #1a1a2e, #0f0f1a, #16213e);
+}
+.camera-grid {
+    position:absolute; inset:0;
+    background:
+        linear-gradient(90deg, transparent 49.5%, rgba(255,255,255,.12) 50%, transparent 50.5%),
+        linear-gradient(0deg, transparent 49.5%, rgba(255,255,255,.12) 50%, transparent 50.5%);
+}
+.camera-circle {
+    position:absolute; width:80px; height:80px; left:50%; bottom:24px;
+    transform:translateX(-50%); border-radius:50%;
+    border:4px solid rgba(255,255,255,.8); cursor:pointer;
+    box-shadow:0 0 0 4px rgba(0,0,0,.2);
+    transition:.12s;
+}
+.camera-circle:active { transform:translateX(-50%) scale(.88); }
+
+/* ── Gallery ─────────────────────────────────────── */
+.gallery { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+.photo {
+    aspect-ratio:1; border-radius:10px;
+    display:flex; justify-content:center; align-items:center;
+    font-size:28px; cursor:pointer;
+    transition:.12s;
+}
+.photo:active { transform:scale(.95); opacity:.8; }
+
+/* ── Music ───────────────────────────────────────── */
+.music-card {
+    padding:24px; border-radius:24px; text-align:center;
+    background:linear-gradient(145deg, #3a1a5e, #c72a5a);
+}
+.album {
+    width:180px; height:180px; margin:16px auto; border-radius:24px;
+    display:flex; align-items:center; justify-content:center; font-size:60px;
+    background:linear-gradient(135deg, #00eaff, #8d3cff);
+    box-shadow:0 8px 32px rgba(0,0,0,.3);
+}
+.music-buttons { display:flex; justify-content:center; gap:20px; margin-top:16px; }
+.music-buttons button {
+    width:52px; height:52px; border:none; border-radius:50%;
+    background:rgba(255,255,255,.15); color:white; font-size:20px; cursor:pointer;
+    transition:.12s;
+}
+.music-buttons button:active { transform:scale(.88); background:rgba(255,255,255,.25); }
+
+/* ── Settings ────────────────────────────────────── */
+.setting {
+    padding:14px 16px; margin-bottom:6px; border-radius:14px;
+    background:rgba(255,255,255,.04); display:flex;
+    justify-content:space-between; align-items:center;
+}
+.switch {
+    width:50px; height:28px; border-radius:16px;
+    background:rgba(255,255,255,.15); position:relative; cursor:pointer;
+    transition:.25s;
+}
+.switch::after {
+    content:""; position:absolute; width:24px; height:24px;
+    top:2px; left:2px; border-radius:50%; background:white;
+    transition:.25s cubic-bezier(.4,0,.2,1);
+    box-shadow:0 1px 4px rgba(0,0,0,.2);
+}
+.switch.on { background:var(--success); }
+.switch.on::after { left:24px; }
+
+/* ── Control Center ──────────────────────────────── */
+.control-center {
+    position:absolute; z-index:120; inset:0; padding:70px 16px 20px;
+    background:rgba(10,12,20,.85);
+    backdrop-filter:blur(40px) saturate(1.4);
+    display:none; animation: slideDown .35s cubic-bezier(.32,.72,0,1);
+}
+.control-center.active { display:block; }
+@keyframes slideDown {
+    from { transform:translateY(-24px); opacity:0; }
+    to { transform:translateY(0); opacity:1; }
+}
+.control-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.control {
+    padding:18px 14px; border-radius:18px;
+    background:rgba(255,255,255,.05); cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    font-size:13px; transition:.12s;
+}
+.control.active { background:rgba(0,122,255,.25); }
+.control .ctrl-icon { font-size:26px; }
+.slider { width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px; outline:none; background:rgba(255,255,255,.12); }
+.slider::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:white; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.3); }
+
+/* ── Notifications ───────────────────────────────── */
+.notifications-panel {
+    position:absolute; z-index:110; inset:0; padding:60px 16px;
+    background:rgba(0,0,0,.7);
+    backdrop-filter:blur(30px) saturate(1.3);
+    display:none;
+}
+.notifications-panel.active { display:block; animation:slideDown .3s ease; }
+.notif {
+    padding:14px 16px; margin-bottom:8px; border-radius:16px;
+    background:rgba(255,255,255,.06);
+}
+.notif strong { display:block; margin-bottom:4px; font-size:14px; }
+.notif p { font-size:13px; color:var(--text2); }
+
+/* ── System Bar (home indicator) ─────────────────── */
+.home-indicator {
+    position:absolute; z-index:100; bottom:8px; left:50%; transform:translateX(-50%);
+    width:134px; height:5px; border-radius:3px; background:rgba(255,255,255,.5);
+    cursor:pointer; transition:.15s;
+}
+.home-indicator:active { background:rgba(255,255,255,.3); }
+
+/* ── Light Mode ──────────────────────────────────── */
+body.light {
+    --bg: #f2f2f7;
+    --text: #1c1c1e;
+    --text2: #3a3a3c;
+    --muted: #8e8e93;
+}
+body.light .phone { box-shadow:0 30px 80px rgba(0,0,0,.4), 0 0 0 1px rgba(0,0,0,.08); }
+body.light .app-window { background:rgba(245,245,247,.95); }
+body.light .setting { background:rgba(0,0,0,.04); }
+body.light .bubble { background:rgba(0,0,0,.06); }
+body.light .dial-btn { background:rgba(0,0,0,.04); color:#1c1c1e; }
+body.light .calc-btn { background:rgba(0,0,0,.04); color:#1c1c1e; }
+body.light .browser-page { background:white; }
+body.light .control-center { background:rgba(255,255,255,.7); color:#1c1c1e; }
+body.light .notifications-panel { background:rgba(255,255,255,.75); color:#1c1c1e; }
+body.light .control { background:rgba(0,0,0,.05); }
+body.light .control.active { background:rgba(0,122,255,.2); }
+body.light .app-name { color:#3a3a3c; text-shadow:none; font-weight:500; }
+body.light .dock { background:rgba(255,255,255,.7); }
+body.light .browser-bar input { background:rgba(0,0,0,.04); color:#1c1c1e; }
+body.light .message-input input { background:rgba(0,0,0,.04); color:#1c1c1e; }
+body.light .notes textarea { background:rgba(0,0,0,.03); color:#3a2a10; }
+body.light .date-widget .dow { color:#3a3a3c; }
+body.light .home-indicator { background:rgba(0,0,0,.3); }
+
+/* ─── GAMES (Carried over, restyled) ─────────────── */
+
+/* Wordle */
+.wordle-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; max-width:260px; margin:0 auto; }
+.wordle-cell { aspect-ratio:1; display:flex; justify-content:center; align-items:center; font-size:22px; font-weight:700; border-radius:8px; background:rgba(255,255,255,.06); text-transform:uppercase; transition:.25s; }
+.wordle-cell.green { background:#30d158; color:white; }
+.wordle-cell.yellow { background:#ff9f0a; color:#1c1c1e; }
+.wordle-cell.gray { background:rgba(255,255,255,.1); color:rgba(255,255,255,.4); }
+.wordle-input { display:flex; gap:8px; margin:14px 0; justify-content:center; }
+.wordle-input input { width:50px; padding:10px; border:none; border-radius:10px; background:rgba(255,255,255,.06); color:white; font-size:20px; text-transform:uppercase; text-align:center; outline:none; font-weight:700; }
+.wordle-input input::placeholder { color:var(--muted); }
+.wordle-input button { padding:10px 20px; border:none; border-radius:12px; background:#30d158; color:white; font-size:15px; font-weight:600; cursor:pointer; }
+.wordle-msg { text-align:center; margin-top:8px; min-height:24px; font-weight:600; font-size:14px; }
+
+/* Simon */
+.simon-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; max-width:240px; margin:16px auto; }
+.simon-btn { aspect-ratio:1; border-radius:18px; border:none; cursor:pointer; transition:.12s; box-shadow:0 4px 12px rgba(0,0,0,.2); }
+.simon-btn:active { transform:scale(.92); }
+.simon-btn.simon-lit { filter:brightness(1.5) saturate(1.4); transform:scale(1.04); }
+.simon-red { background:#ff453a; }
+.simon-blue { background:#007aff; }
+.simon-green { background:#30d158; }
+.simon-yellow { background:#ff9f0a; }
+.simon-score { text-align:center; font-size:16px; font-weight:600; margin-bottom:6px; color:var(--text2); }
+.simon-btn-row { text-align:center; margin-top:10px; }
+.simon-btn-row button { padding:10px 24px; border:none; border-radius:14px; background:var(--accent); color:white; font-size:15px; font-weight:500; cursor:pointer; }
+
+/* Snake */
+.snake-canvas { display:block; margin:10px auto; background:#1a1e2a; border-radius:16px; }
+.snake-score { text-align:center; font-size:16px; font-weight:600; margin-bottom:6px; color:var(--text2); }
+.snake-controls { display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:8px; }
+.snake-controls button { width:52px; height:52px; border:none; border-radius:50%; background:rgba(255,255,255,.06); color:white; font-size:18px; cursor:pointer; transition:.12s; }
+.snake-controls button:active { transform:scale(.88); background:rgba(255,255,255,.12); }
+.snake-row { display:flex; gap:4px; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+<div class="screen">
+<div class="wallpaper"></div>
+
+<!-- DYNAMIC ISLAND -->
+<div class="dynamic-island">
+    <div class="sensor"></div>
+    <div class="camera-dot"></div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+    <span id="statusTime">12:00</span>
+    <div class="status-icons">
+        <span style="font-weight:600">📶</span>
+        <span>📡</span>
+        <div class="battery"><div class="battery-level" id="batteryLevel"></div></div>
+    </div>
+</div>
+
+<!-- LOCK SCREEN -->
+<div class="lock-screen" id="lockScreen">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-time" id="lockTime">12:00</div>
+    <div class="lock-date" id="lockDate">Lundi 1 janvier</div>
+    <div class="lock-footer">
+        <div class="lock-shortcut">
+            <button onclick="openAppLocked('phoneApp')">☎️</button>
+            <button onclick="openAppLocked('messagesApp')">💬</button>
+            <button onclick="openAppLocked('cameraApp')">📷</button>
+        </div>
+        <div class="unlock-hint">↑ Balayer pour déverrouiller</div>
+    </div>
+</div>
+
+<!-- HOME SCREEN -->
+<div class="home" id="homeScreen">
+    <div class="date-widget">
+        <div class="dow" id="homeDow">Lundi</div>
+        <div class="daynum" id="homeDayNum">1</div>
+    </div>
+    <div class="apps">
+        <div class="app" onclick="openApp('phoneApp')"><div class="app-icon phone-icon">☎️</div><div class="app-name">Téléphone</div></div>
+        <div class="app" onclick="openApp('messagesApp')"><div class="app-icon message-icon">💬</div><div class="app-name">Messages</div></div>
+        <div class="app" onclick="openApp('browserApp')"><div class="app-icon browser-icon">🌐</div><div class="app-name">Safari</div></div>
+        <div class="app" onclick="openApp('cameraApp')"><div class="app-icon camera-icon">📷</div><div class="app-name">Caméra</div></div>
+        <div class="app" onclick="openApp('notesApp')"><div class="app-icon notes-icon">📝</div><div class="app-name">Notes</div></div>
+        <div class="app" onclick="openApp('calculatorApp')"><div class="app-icon calc-icon">🧮</div><div class="app-name">Calculatrice</div></div>
+        <div class="app" onclick="openApp('contactsApp')"><div class="app-icon contacts-icon">👥</div><div class="app-name">Contacts</div></div>
+        <div class="app" onclick="openApp('galleryApp')"><div class="app-icon gallery-icon">🖼️</div><div class="app-name">Galerie</div></div>
+        <div class="app" onclick="openApp('musicApp')"><div class="app-icon music-icon">🎵</div><div class="app-name">Musique</div></div>
+        <div class="app" onclick="openApp('settingsApp')"><div class="app-icon settings-icon">⚙️</div><div class="app-name">Réglages</div></div>
+        <div class="app" onclick="openApp('clockApp')"><div class="app-icon clock-icon">⏰</div><div class="app-name">Horloge</div></div>
+        <div class="app" onclick="openApp('weatherApp')"><div class="app-icon weather-icon">☀️</div><div class="app-name">Météo</div></div>
+        <div class="app" onclick="openApp('wordleApp')"><div class="app-icon game-icon1">🟩</div><div class="app-name">Mot Mystère</div></div>
+        <div class="app" onclick="openApp('simonApp')"><div class="app-icon game-icon2">🔴</div><div class="app-name">Simon</div></div>
+        <div class="app" onclick="openApp('snakeApp')"><div class="app-icon game-icon3">🐍</div><div class="app-name">Serpent</div></div>
+    </div>
+</div>
+
+<!-- DOCK -->
+<div class="dock">
+    <div class="app" onclick="openApp('phoneApp')"><div class="app-icon phone-icon">☎️</div></div>
+    <div class="app" onclick="openApp('messagesApp')"><div class="app-icon message-icon">💬</div></div>
+    <div class="app" onclick="openApp('browserApp')"><div class="app-icon browser-icon">🌐</div></div>
+    <div class="app" onclick="openApp('cameraApp')"><div class="app-icon camera-icon">📷</div></div>
+</div>
+
+<!-- ============ PHONE ============ -->
+<div class="app-window" id="phoneApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Téléphone</h2></div>
+    <div class="app-content">
+        <div class="dial-display" id="dialDisplay"></div>
+        <div class="dial-grid">
+            <button class="dial-btn" onclick="dial('1')">1<div style="font-size:10px;opacity:.5;font-weight:300;letter-spacing:2px;margin-top:-4px">.</div></button>
+            <button class="dial-btn" onclick="dial('2')">2<div style="font-size:10px;opacity:.5;font-weight:300">ABC</div></button>
+            <button class="dial-btn" onclick="dial('3')">3<div style="font-size:10px;opacity:.5;font-weight:300">DEF</div></button>
+            <button class="dial-btn" onclick="dial('4')">4<div style="font-size:10px;opacity:.5;font-weight:300">GHI</div></button>
+            <button class="dial-btn" onclick="dial('5')">5<div style="font-size:10px;opacity:.5;font-weight:300">JKL</div></button>
+            <button class="dial-btn" onclick="dial('6')">6<div style="font-size:10px;opacity:.5;font-weight:300">MNO</div></button>
+            <button class="dial-btn" onclick="dial('7')">7<div style="font-size:10px;opacity:.5;font-weight:300">PQRS</div></button>
+            <button class="dial-btn" onclick="dial('8')">8<div style="font-size:10px;opacity:.5;font-weight:300">TUV</div></button>
+            <button class="dial-btn" onclick="dial('9')">9<div style="font-size:10px;opacity:.5;font-weight:300">WXYZ</div></button>
+            <button class="dial-btn" onclick="dial('*')">*</button>
+            <button class="dial-btn" onclick="dial('0')">0<div style="font-size:10px;opacity:.5;font-weight:300">+</div></button>
+            <button class="dial-btn" onclick="dial('#')">#</button>
+        </div>
+        <button class="call-btn" onclick="callNumber()">📞</button>
+    </div>
+</div>
+
+<!-- ============ MESSAGES ============ -->
+<div class="app-window" id="messagesApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Messages</h2></div>
+    <div class="app-content" style="display:flex;flex-direction:column;justify-content:space-between;padding-bottom:8px">
+        <div class="chat" id="chat">
+            <div class="bubble">Salut 👋</div>
+            <div class="bubble">Bienvenue sur MyPhone OS !</div>
+            <div class="bubble me">Merci !</div>
+        </div>
+        <div class="message-input">
+            <input id="messageInput" placeholder="iMessage" onkeydown="if(event.key==='Enter')sendMessage()">
+            <button onclick="sendMessage()">↑</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ BROWSER ============ -->
+<div class="app-window" id="browserApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Safari</h2></div>
+    <div class="app-content">
+        <div class="browser-bar">
+            <input id="browserInput" placeholder="Rechercher ou saisir une URL" onkeydown="if(event.key==='Enter')searchWeb()">
+            <button onclick="searchWeb()">Go</button>
+        </div>
+        <div class="browser-page" id="browserPage">
+            <div style="text-align:center;padding:40px 0">
+                <h1 style="font-size:42px;font-weight:700;color:#1c1c1e;margin-bottom:16px;letter-spacing:-1px">MySearch</h1>
+                <p style="color:#666">Bienvenue sur Safari simulé.</p>
+                <p style="color:#999;margin-top:8px">Tape une recherche ci-dessus.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ NOTES ============ -->
+<div class="app-window" id="notesApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Notes</h2></div>
+    <div class="app-content">
+        <div class="notes">
+            <textarea placeholder="Écris quelque chose…">Ma première note ✏️</textarea>
+            <button class="save-note" onclick="saveNote()">💾 Sauvegarder</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ CALCULATOR ============ -->
+<div class="app-window" id="calculatorApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Calculatrice</h2></div>
+    <div class="app-content">
+        <div class="calculator" style="max-width:320px;margin:0 auto">
+            <div class="calc-display" id="calcDisplay">0</div>
+            <div class="calc-grid" style="margin-top:10px">
+                <button class="calc-btn extra" onclick="calcPress('C')">C</button>
+                <button class="calc-btn extra" onclick="calcPress('±')">±</button>
+                <button class="calc-btn extra" onclick="calcPress('%')">%</button>
+                <button class="calc-btn operator" onclick="calcPress('/')">÷</button>
+                <button class="calc-btn" onclick="calcPress('7')">7</button>
+                <button class="calc-btn" onclick="calcPress('8')">8</button>
+                <button class="calc-btn" onclick="calcPress('9')">9</button>
+                <button class="calc-btn operator" onclick="calcPress('*')">×</button>
+                <button class="calc-btn" onclick="calcPress('4')">4</button>
+                <button class="calc-btn" onclick="calcPress('5')">5</button>
+                <button class="calc-btn" onclick="calcPress('6')">6</button>
+                <button class="calc-btn operator" onclick="calcPress('-')">−</button>
+                <button class="calc-btn" onclick="calcPress('1')">1</button>
+                <button class="calc-btn" onclick="calcPress('2')">2</button>
+                <button class="calc-btn" onclick="calcPress('3')">3</button>
+                <button class="calc-btn operator" onclick="calcPress('+')">+</button>
+                <button class="calc-btn" style="grid-column:span 2;border-radius:16px" onclick="calcPress('0')">0</button>
+                <button class="calc-btn" onclick="calcPress('.')">.</button>
+                <button class="calc-btn equal" onclick="calcPress('=')">=</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ CONTACTS ============ -->
+<div class="app-window" id="contactsApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Contacts</h2></div>
+    <div class="app-content">
+        <div class="setting"><div style="display:flex;align-items:center;gap:12px"><div class="app-icon phone-icon" style="width:40px;height:40px;font-size:16px;border-radius:10px">AB</div><div><strong>Alice Bernard</strong><br><span style="font-size:13px;color:var(--muted)">06 12 34 56 78</span></div></div></div>
+        <div class="setting"><div style="display:flex;align-items:center;gap:12px"><div class="app-icon browser-icon" style="width:40px;height:40px;font-size:16px;border-radius:10px">CD</div><div><strong>Clément Dubois</strong><br><span style="font-size:13px;color:var(--muted)">07 23 45 67 89</span></div></div></div>
+        <div class="setting"><div style="display:flex;align-items:center;gap:12px"><div class="app-icon music-icon" style="width:40px;height:40px;font-size:16px;border-radius:10px">EM</div><div><strong>Emma Martin</strong><br><span style="font-size:13px;color:var(--muted)">06 34 56 78 90</span></div></div></div>
+        <div class="setting"><div style="display:flex;align-items:center;gap:12px"><div class="app-icon notes-icon" style="width:40px;height:40px;font-size:16px;border-radius:10px">LR</div><div><strong>Lucas Robert</strong><br><span style="font-size:13px;color:var(--muted)">07 45 67 89 01</span></div></div></div>
+        <div class="setting"><div style="display:flex;align-items:center;gap:12px"><div class="app-icon gallery-icon" style="width:40px;height:40px;font-size:16px;border-radius:10px">SP</div><div><strong>Sophie Petit</strong><br><span style="font-size:13px;color:var(--muted)">06 56 78 90 12</span></div></div></div>
+    </div>
+</div>
+
+<!-- ============ GALLERY ============ -->
+<div class="app-window" id="galleryApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Galerie</h2></div>
+    <div class="app-content">
+        <div class="gallery">
+            <div class="photo" onclick="openPhoto(0)" style="background:linear-gradient(135deg,#007aff,#5856d6)">🌄</div>
+            <div class="photo" onclick="openPhoto(1)" style="background:linear-gradient(135deg,#ff2d55,#b71a3a)">🌅</div>
+            <div class="photo" onclick="openPhoto(2)" style="background:linear-gradient(135deg,#34c759,#1a8d3a)">🌿</div>
+            <div class="photo" onclick="openPhoto(3)" style="background:linear-gradient(135deg,#ff9500,#b36600)">🌺</div>
+            <div class="photo" onclick="openPhoto(4)" style="background:linear-gradient(135deg,#007aff,#00c7be)">🌊</div>
+            <div class="photo" onclick="openPhoto(5)" style="background:linear-gradient(135deg,#34c759,#30d158)">🏔️</div>
+            <div class="photo" onclick="openPhoto(6)" style="background:linear-gradient(135deg,#ff2d55,#ff9500)">🌸</div>
+            <div class="photo" onclick="openPhoto(7)" style="background:linear-gradient(135deg,#5856d6,#007aff)">🌌</div>
+            <div class="photo" onclick="openPhoto(8)" style="background:linear-gradient(135deg,#007aff,#34c759)">🏝️</div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ MUSIC ============ -->
+<div class="app-window" id="musicApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Musique</h2></div>
+    <div class="app-content">
+        <div class="music-card">
+            <div class="album">🎵</div>
+            <h3 id="musicTitle" style="font-size:22px;font-weight:700">Summer Vibes</h3>
+            <p style="opacity:.7;font-size:14px" id="musicArtist">Artiste A</p>
+            <div class="music-buttons">
+                <button onclick="prevTrack()">⏮</button>
+                <button onclick="togglePlay()">▶️</button>
+                <button onclick="nextTrack()">⏭</button>
+            </div>
+        </div>
+        <div style="margin-top:18px;padding:12px;border-radius:16px;background:rgba(255,255,255,.04)">
+            <div style="display:flex;justify-content:space-between;padding:8px 4px;border-bottom:0.5px solid rgba(255,255,255,.04)">
+                <span>🎵 Summer Vibes</span><span style="color:var(--muted);font-size:13px">3:42</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 4px;border-bottom:0.5px solid rgba(255,255,255,.04)">
+                <span>🎵 Night Drive</span><span style="color:var(--muted);font-size:13px">4:15</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 4px">
+                <span>🎵 Ocean Waves</span><span style="color:var(--muted);font-size:13px">5:01</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SETTINGS ============ -->
+<div class="app-window" id="settingsApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Réglages</h2></div>
+    <div class="app-content">
+        <div class="setting"><span>📶 Wi-Fi</span><span style="color:var(--muted);font-size:14px">Freebox</span></div>
+        <div class="setting"><span>📡 Bluetooth</span><div class="switch" onclick="toggleSwitch(this)"></div></div>
+        <div class="setting"><span>🔔 Son</span><div class="switch on" onclick="toggleSwitch(this)"></div></div>
+        <div class="setting"><span>✈️ Mode avion</span><div class="switch" onclick="toggleSwitch(this)"></div></div>
+        <div class="setting"><span>☀️ Mode clair</span><div class="switch" onclick="toggleSwitch(this);toggleTheme()"></div></div>
+        <div class="setting"><span>📱 À propos</span><span style="color:var(--muted);font-size:14px">iOS 17.0</span></div>
+        <div class="setting"><span>🔋 Batterie</span><span style="color:var(--muted);font-size:14px">87%</span></div>
+        <div class="setting"><span>💾 Stockage</span><span style="color:var(--muted);font-size:14px">32 Go / 128 Go</span></div>
+    </div>
+</div>
+
+<!-- ============ CLOCK ============ -->
+<div class="app-window" id="clockApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Horloge</h2></div>
+    <div class="app-content">
+        <div style="text-align:center;padding:20px 0">
+            <div style="font-size:64px;font-weight:200;letter-spacing:-3px" id="clockAppTime">12:00</div>
+            <div style="color:var(--muted);margin-top:6px;font-size:15px" id="clockAppDate">Lundi 1 janvier</div>
+            <div style="margin-top:32px;display:flex;gap:12px;justify-content:center">
+                <button onclick="setAlarm()" style="padding:14px 24px;border:none;border-radius:14px;background:rgba(255,255,255,.06);color:white;font-size:15px;cursor:pointer">⏰ Alarme</button>
+                <button onclick="startStopwatch()" style="padding:14px 24px;border:none;border-radius:14px;background:var(--accent);color:white;font-size:15px;cursor:pointer">⏱️ Chrono</button>
+            </div>
+            <div style="margin-top:28px;padding:16px;border-radius:16px;background:rgba(255,255,255,.04);text-align:left">
+                <p style="color:var(--muted);font-size:13px">Prochaine alarme: 07:00</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ WEATHER ============ -->
+<div class="app-window" id="weatherApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Météo</h2></div>
+    <div class="app-content">
+        <div style="text-align:center;padding:10px 0">
+            <div style="font-size:80px">☀️</div>
+            <div style="font-size:52px;font-weight:200;margin:8px 0;letter-spacing:-2px">22°</div>
+            <div style="color:var(--text2);font-size:16px">Paris, France</div>
+            <div style="margin-top:4px;font-size:14px;color:var(--muted)">Ensoleillé</div>
+            <div style="margin-top:24px;display:flex;gap:12px;justify-content:center">
+                <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.04);flex:1"><div style="font-size:24px">🌡️</div><div style="font-size:13px;color:var(--muted);margin-top:4px">Ressenti 24°</div></div>
+                <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.04);flex:1"><div style="font-size:24px">💧</div><div style="font-size:13px;color:var(--muted);margin-top:4px">45%</div></div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:12px;justify-content:center">
+                <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.04);flex:1"><div style="font-size:24px">💨</div><div style="font-size:13px;color:var(--muted);margin-top:4px">12 km/h</div></div>
+                <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.04);flex:1"><div style="font-size:24px">☀️</div><div style="font-size:13px;color:var(--muted);margin-top:4px">UV modéré</div></div>
+            </div>
+            <button onclick="refreshWeather()" style="margin-top:20px;padding:12px 32px;border:none;border-radius:14px;background:var(--accent);color:white;font-size:15px;cursor:pointer">🔄 Actualiser</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ WORDLE ============ -->
+<div class="app-window" id="wordleApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Mot Mystère</h2></div>
+    <div class="app-content" style="text-align:center">
+        <p style="color:var(--muted);margin-bottom:12px;font-size:13px">Trouve le mot de 5 lettres en 6 essais</p>
+        <div class="wordle-grid" id="wordleGrid"></div>
+        <div class="wordle-input">
+            <input id="wordleInput" maxlength="5" placeholder="?" onkeydown="if(event.key==='Enter')wordleGuess()">
+            <button onclick="wordleGuess()">OK</button>
+        </div>
+        <div class="wordle-msg" id="wordleMsg"></div>
+        <button onclick="wordleReset()" style="margin-top:8px;padding:8px 20px;border:none;border-radius:12px;background:rgba(255,255,255,.06);color:white;cursor:pointer;font-size:13px">🔄 Nouveau mot</button>
+    </div>
+</div>
+
+<!-- ============ SIMON ============ -->
+<div class="app-window" id="simonApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Simon</h2></div>
+    <div class="app-content" style="text-align:center">
+        <div class="simon-score">Niveau: <span id="simonLevel">0</span></div>
+        <div class="simon-grid">
+            <div class="simon-btn simon-red" id="simon0" onclick="simonClick(0)"></div>
+            <div class="simon-btn simon-blue" id="simon1" onclick="simonClick(1)"></div>
+            <div class="simon-btn simon-green" id="simon2" onclick="simonClick(2)"></div>
+            <div class="simon-btn simon-yellow" id="simon3" onclick="simonClick(3)"></div>
+        </div>
+        <div style="color:var(--muted);margin:8px 0;font-size:14px" id="simonMsg">Appuie sur Démarrer</div>
+        <div class="simon-btn-row">
+            <button onclick="simonStart()">▶️ Démarrer</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SNAKE ============ -->
+<div class="app-window" id="snakeApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Serpent</h2></div>
+    <div class="app-content" style="text-align:center">
+        <div class="snake-score">Score: <span id="snakeScore">0</span></div>
+        <canvas class="snake-canvas" id="snakeCanvas" width="300" height="300"></canvas>
+        <div class="snake-controls">
+            <button onclick="snakeDir('up')">⬆️</button>
+            <div class="snake-row">
+                <button onclick="snakeDir('left')">⬅️</button>
+                <button onclick="snakeDir('right')">➡️</button>
+            </div>
+            <button onclick="snakeDir('down')">⬇️</button>
+        </div>
+        <button onclick="snakeReset()" style="margin-top:10px;padding:10px 24px;border:none;border-radius:14px;background:var(--accent);color:white;cursor:pointer;font-size:14px">🔄 Nouvelle partie</button>
+        <div style="color:var(--muted);margin-top:6px;font-size:12px">↑ ↓ ← → ou ZQSD</div>
+    </div>
+</div>
+
+<!-- ============ CAMERA ============ -->
+<div class="app-window" id="cameraApp">
+    <div class="app-header"><button class="back" onclick="closeApps()">‹</button><h2>Caméra</h2></div>
+    <div class="app-content" style="padding:8px;background:#000">
+        <div class="camera-view">
+            <div class="camera-grid"></div>
+            <div class="camera-circle" onclick="takePhoto()"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ CONTROL CENTER ============ -->
+<div class="control-center" id="controlCenter">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <span style="font-size:20px;font-weight:600">Centre de contrôle</span>
+        <button onclick="toggleControlCenter()" style="background:rgba(255,255,255,.08);border:none;border-radius:50%;width:34px;height:34px;color:white;font-size:16px;cursor:pointer">✕</button>
+    </div>
+    <div class="control-grid">
+        <div class="control active" onclick="toggleControl(this)"><span class="ctrl-icon">✈️</span><span>Mode avion</span></div>
+        <div class="control active" onclick="toggleControl(this)"><span class="ctrl-icon">📶</span><span>Wi-Fi</span></div>
+        <div class="control" onclick="toggleControl(this)"><span class="ctrl-icon">🔦</span><span>Lampe</span></div>
+        <div class="control" onclick="toggleControl(this)"><span class="ctrl-icon">🔔</span><span>Ne pas déranger</span></div>
+    </div>
+    <div style="margin-top:20px">
+        <label style="display:flex;justify-content:space-between;margin-bottom:6px"><span>☀️ Luminosité</span><span style="color:var(--muted);font-size:13px" id="brightnessVal">70%</span></label>
+        <input type="range" class="slider" min="0" max="100" value="70" oninput="updateBrightness(this.value)">
+    </div>
+    <div style="margin-top:16px">
+        <label style="display:flex;justify-content:space-between;margin-bottom:6px"><span>🔊 Volume</span><span style="color:var(--muted);font-size:13px" id="volumeVal">50%</span></label>
+        <input type="range" class="slider" min="0" max="100" value="50" oninput="updateVolume(this.value)">
+    </div>
+    <button onclick="toggleTheme()" style="margin-top:20px;width:100%;padding:14px;border:none;border-radius:16px;background:rgba(255,255,255,.06);color:var(--text);font-size:15px;cursor:pointer;font-weight:500">☀️ Mode clair/sombre</button>
+</div>
+
+<!-- ============ NOTIFICATIONS ============ -->
+<div class="notifications-panel" id="notificationsPanel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span style="font-size:20px;font-weight:600">Notifications</span>
+        <button onclick="toggleNotifications()" style="background:rgba(255,255,255,.08);border:none;border-radius:50%;width:34px;height:34px;color:white;font-size:16px;cursor:pointer">✕</button>
+    </div>
+    <div class="notif"><strong>📱 MyPhone OS</strong><p>Bienvenue sur votre nouveau téléphone !</p></div>
+    <div class="notif"><strong>☀️ Météo</strong><p>Ensoleillé aujourd'hui, 22°C à Paris.</p></div>
+    <div class="notif"><strong>🔋 Batterie</strong><p>Batterie chargée à 87%.</p></div>
+    <div class="notif"><strong>📶 Wi-Fi</strong><p>Connecté au réseau "Freebox".</p></div>
+</div>
+
+<!-- HOME INDICATOR -->
+<div class="home-indicator" onclick="toggleControlCenter()"></div>
+
+</div><!-- .screen -->
+</div><!-- .phone -->
+
+<script>
+/* ═══════════════════════════════════════════════════
+   MyPhone OS — JavaScript (iOS 17 revamp)
+   ═══════════════════════════════════════════════════ */
+
+// ─── LOCK SCREEN ──────────────────────────────────────
+const lockScreen = document.getElementById('lockScreen');
+lockScreen.addEventListener('click', () => {
+    lockScreen.classList.add('hidden');
+});
+// swipe to unlock
+let touchStartY = 0;
+document.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; });
+document.addEventListener('touchend', (e) => {
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (dy < -50 && !lockScreen.classList.contains('hidden')) {
+        lockScreen.classList.add('hidden');
+    }
+});
+
+// Lock screen shortcuts (unlock + open app)
+function openAppLocked(id) {
+    lockScreen.classList.add('hidden');
+    setTimeout(() => openApp(id), 400);
+}
+
+// ─── LIVE CLOCK ───────────────────────────────────────
+function updateClock() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const timeStr = hh + ':' + mm;
+    const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+    const dayName = days[now.getDay()];
+    const day = now.getDate();
+    const month = months[now.getMonth()];
+    const dateStr = dayName + ' ' + day + ' ' + month;
+
+    document.getElementById('statusTime').textContent = timeStr;
+    document.getElementById('lockTime').textContent = timeStr;
+    document.getElementById('lockDate').textContent = dateStr;
+    document.getElementById('homeDow').textContent = dayName;
+    document.getElementById('homeDayNum').textContent = day;
+
+    const clockAppTime = document.getElementById('clockAppTime');
+    const clockAppDate = document.getElementById('clockAppDate');
+    if (clockAppTime) clockAppTime.textContent = timeStr;
+    if (clockAppDate) clockAppDate.textContent = dateStr;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ─── OPEN / CLOSE APPS ───────────────────────────────
+function openApp(id) {
+    document.querySelectorAll('.app-window').forEach(w => w.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+}
+function closeApps() {
+    document.querySelectorAll('.app-window').forEach(w => w.classList.remove('active'));
+}
+
+// ─── TÉLÉPHONE ────────────────────────────────────────
+let dialNumber = '';
+function dial(digit) {
+    dialNumber += digit;
+    document.getElementById('dialDisplay').textContent = dialNumber;
+}
+function callNumber() {
+    const display = document.getElementById('dialDisplay');
+    if (dialNumber.length > 0) {
+        display.textContent = '📞 Appel en cours…';
+        setTimeout(() => {
+            display.textContent = '❌ Appel terminé';
+            dialNumber = '';
+            setTimeout(() => { display.textContent = ''; }, 1500);
+        }, 2500);
+    }
+}
+
+// ─── MESSAGES ─────────────────────────────────────────
+function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const chat = document.getElementById('chat');
+    const text = input.value.trim();
+    if (text === '') return;
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble me';
+    bubble.textContent = text;
+    chat.appendChild(bubble);
+    input.value = '';
+    chat.scrollTop = chat.scrollHeight;
+    setTimeout(() => {
+        const replies = ['Cool 😎','Super!',"D'accord",'Nickel 👍','Je vois','Parfait','OK','Bonjour!'];
+        const reply = document.createElement('div');
+        reply.className = 'bubble';
+        reply.textContent = replies[Math.floor(Math.random() * replies.length)];
+        chat.appendChild(reply);
+        chat.scrollTop = chat.scrollHeight;
+    }, 1000);
+}
+
+// ─── CALCULATRICE ─────────────────────────────────────
+let calcDisplay = '';
+function calcPress(val) {
+    const display = document.getElementById('calcDisplay');
+    if (!display) return;
+    if (val === 'C') { calcDisplay = ''; display.textContent = '0'; return; }
+    if (val === '±') {
+        if (calcDisplay.startsWith('-')) calcDisplay = calcDisplay.slice(1);
+        else if (calcDisplay && calcDisplay !== '0') calcDisplay = '-' + calcDisplay;
+        display.textContent = calcDisplay || '0';
+        return;
+    }
+    if (val === '%') {
+        try { const r = eval(calcDisplay) / 100; display.textContent = r; calcDisplay = String(r); } catch { display.textContent = 'Erreur'; calcDisplay = ''; }
+        return;
+    }
+    if (val === '=') {
+        try {
+            const result = Function('"use strict"; return (' + calcDisplay + ')')();
+            display.textContent = result;
+            calcDisplay = String(result);
+        } catch { display.textContent = 'Erreur'; calcDisplay = ''; }
+        return;
+    }
+    calcDisplay += val;
+    display.textContent = calcDisplay;
+}
+
+// ─── NOTES ────────────────────────────────────────────
+function saveNote() {
+    const textarea = document.querySelector('.notes textarea');
+    if (textarea) {
+        if (textarea.value.trim() === '') alert('La note est vide !');
+        else alert('✅ Note sauvegardée !\n"' + textarea.value.substring(0, 30) + '…"');
+    }
+}
+
+// ─── BROWSER ──────────────────────────────────────────
+function searchWeb() {
+    const input = document.getElementById('browserInput');
+    const page = document.getElementById('browserPage');
+    const query = input.value.trim();
+    if (!query) {
+        page.innerHTML = '<div style="text-align:center;padding:40px 0"><h1 style="font-size:42px;font-weight:700;color:#1c1c1e;margin-bottom:16px;letter-spacing:-1px">MySearch</h1><p style="color:#666">Tape une recherche ci-dessus.</p></div>';
+        return;
+    }
+    page.innerHTML = `
+        <div style="text-align:center;padding:30px 0">
+            <p style="font-size:14px;color:#999">Résultats pour</p>
+            <h2 style="font-size:22px;font-weight:600;color:#1c1c1e;margin:8px 0">« ${query} »</h2>
+            <div style="background:#f5f5f5;padding:16px;border-radius:12px;text-align:left;margin-top:16px">
+                <p style="color:#1a0dab;font-size:16px;font-weight:500;margin-bottom:4px">1. ${query} — Wikipédia</p>
+                <p style="color:#545454;font-size:13px">Lorem ipsum dolor sit amet…</p>
+                <p style="color:#1a0dab;font-size:16px;font-weight:500;margin:12px 0 4px">2. ${query} — Actualités</p>
+                <p style="color:#545454;font-size:13px">Sed do eiusmod tempor incididunt…</p>
+                <p style="color:#1a0dab;font-size:16px;font-weight:500;margin:12px 0 4px">3. Images de ${query}</p>
+                <p style="color:#545454;font-size:13px">Ut enim ad minim veniam…</p>
+            </div>
+            <p style="color:#ccc;font-size:12px;margin-top:16px">🔒 Navigation simulée</p>
+        </div>`;
+}
+
+// ─── CAMERA ───────────────────────────────────────────
+function takePhoto() {
+    const view = document.querySelector('.camera-view');
+    if (view) {
+        view.style.background = 'white';
+        setTimeout(() => {
+            view.style.background = 'radial-gradient(ellipse 60% 40% at 70% 30%, #ffbc69, transparent 30%), linear-gradient(145deg, #1a1a2e, #0f0f1a, #16213e)';
+        }, 150);
+        let flash = document.querySelector('.camera-flash');
+        if (!flash) {
+            flash = document.createElement('div');
+            flash.className = 'camera-flash';
+            flash.style.cssText = 'position:absolute;bottom:120px;left:50%;transform:translateX(-50%);color:white;font-size:13px;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);padding:6px 16px;border-radius:20px;z-index:10';
+            view.appendChild(flash);
+        }
+        flash.textContent = '📸 Photo prise !';
+        setTimeout(() => { flash.textContent = ''; }, 2000);
+    }
+}
+
+// ─── GALERIE ─────────────────────────────────────────
+function openPhoto(index) {
+    const emojis = ['🌄','🌅','🌿','🌺','🌊','🏔️','🌸','🌌','🏝️'];
+    alert('🖼️ Photo ' + (index + 1) + '\n' + emojis[index] + ' Belle image !');
+}
+
+// ─── MUSIQUE ─────────────────────────────────────────
+let isPlaying = false;
+const tracks = [
+    { title: 'Summer Vibes', artist: 'Artiste A', dur: '3:42' },
+    { title: 'Night Drive', artist: 'Artiste B', dur: '4:15' },
+    { title: 'Ocean Waves', artist: 'Artiste C', dur: '5:01' }
+];
+let currentTrack = 0;
+function togglePlay() {
+    const btn = document.querySelector('.music-buttons button:nth-child(2)');
+    isPlaying = !isPlaying;
+    if (btn) btn.textContent = isPlaying ? '⏸' : '▶️';
+    document.getElementById('musicTitle').textContent = isPlaying ? tracks[currentTrack].title : 'En pause';
+    document.getElementById('musicArtist').textContent = isPlaying ? tracks[currentTrack].artist : '';
+}
+function nextTrack() {
+    currentTrack = (currentTrack + 1) % tracks.length;
+    isPlaying = true;
+    document.querySelector('.music-buttons button:nth-child(2)').textContent = '⏸';
+    document.getElementById('musicTitle').textContent = tracks[currentTrack].title;
+    document.getElementById('musicArtist').textContent = tracks[currentTrack].artist;
+}
+function prevTrack() {
+    currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+    isPlaying = true;
+    document.querySelector('.music-buttons button:nth-child(2)').textContent = '⏸';
+    document.getElementById('musicTitle').textContent = tracks[currentTrack].title;
+    document.getElementById('musicArtist').textContent = tracks[currentTrack].artist;
+}
+
+// ─── SETTINGS ─────────────────────────────────────────
+function toggleSwitch(el) { el.classList.toggle('on'); }
+function toggleTheme() {
+    document.body.classList.toggle('light');
+    const cc = document.getElementById('controlCenter');
+    if (cc && cc.classList.contains('active')) cc.classList.remove('active');
+}
+
+// ─── CONTROL CENTER ──────────────────────────────────
+function toggleControlCenter() {
+    document.getElementById('controlCenter').classList.toggle('active');
+}
+function toggleControl(el) {
+    el.classList.toggle('active');
+}
+function updateBrightness(val) {
+    document.getElementById('brightnessVal').textContent = val + '%';
+}
+function updateVolume(val) {
+    document.getElementById('volumeVal').textContent = val + '%';
+}
+
+// ─── NOTIFICATIONS ───────────────────────────────────
+function toggleNotifications() {
+    document.getElementById('notificationsPanel').classList.toggle('active');
+}
+document.querySelector('.statusbar').addEventListener('click', (e) => {
+    if (!e.target.closest('.status-icons')) toggleNotifications();
+});
+
+// ─── WORDLE ─────────────────────────────────────────
+const WORDLE_WORDS = ['APPLE','CHAIR','TABLE','PIANO','ROBOT','MAGIC','CLOUD','DANCE','FLAME','GREEN','HOUSE','JUICE','LIGHT','MARCH','NIGHT','OCEAN','PEACE','QUEEN','RIVER','STONE','TIGER','UNITY','VOICE','WATER','YOUTH'];
+let wordleAnswer = '';
+let wordleRow = 0;
+const wordleGrid = document.getElementById('wordleGrid');
+
+function wordleInit() {
+    wordleGrid.innerHTML = '';
+    wordleRow = 0;
+    wordleAnswer = WORDLE_WORDS[Math.floor(Math.random() * WORDLE_WORDS.length)];
+    for (let r = 0; r < 6; r++)
+        for (let c = 0; c < 5; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'wordle-cell';
+            cell.id = 'wc-' + r + '-' + c;
+            wordleGrid.appendChild(cell);
+        }
+    document.getElementById('wordleInput').value = '';
+    document.getElementById('wordleMsg').textContent = '';
+    document.getElementById('wordleInput').disabled = false;
+    document.getElementById('wordleInput').focus();
+}
+function wordleGuess() {
+    const input = document.getElementById('wordleInput');
+    const guess = input.value.trim().toUpperCase();
+    const msg = document.getElementById('wordleMsg');
+    if (guess.length !== 5) { msg.textContent = '⚠️ 5 lettres'; return; }
+    if (wordleRow >= 6) { msg.textContent = '❌ Terminé! Mot: ' + wordleAnswer; return; }
+    const answerArr = wordleAnswer.split('');
+    const guessArr = guess.split('');
+    const result = Array(5).fill('gray');
+    const used = Array(5).fill(false);
+    for (let i = 0; i < 5; i++)
+        if (guessArr[i] === answerArr[i]) { result[i] = 'green'; used[i] = true; }
+    for (let i = 0; i < 5; i++) {
+        if (result[i] === 'green') continue;
+        for (let j = 0; j < 5; j++)
+            if (!used[j] && guessArr[i] === answerArr[j]) { result[i] = 'yellow'; used[j] = true; break; }
+    }
+    for (let c = 0; c < 5; c++) {
+        const cell = document.getElementById('wc-' + wordleRow + '-' + c);
+        cell.textContent = guessArr[c];
+        cell.className = 'wordle-cell ' + result[c];
+    }
+    wordleRow++;
+    input.value = '';
+    if (guess === wordleAnswer) { msg.textContent = '🎉 Bravo! ' + wordleRow + ' essais!'; input.disabled = true; }
+    else if (wordleRow >= 6) { msg.textContent = '😢 Perdu! Mot: ' + wordleAnswer; input.disabled = true; }
+    input.focus();
+}
+function wordleReset() { wordleInit(); }
+wordleInit();
+
+// ─── SIMON ──────────────────────────────────────────
+let simonSequence = [], simonPlayerIdx = 0, simonLevel = 0, simonPlaying = false, simonLocked = false;
+function simonStart() {
+    simonSequence = []; simonLevel = 0; simonPlayerIdx = 0; simonPlaying = false; simonLocked = true;
+    document.getElementById('simonMsg').textContent = '👀 Regarde…';
+    document.getElementById('simonLevel').textContent = '0';
+    simonNextRound();
+}
+function simonNextRound() {
+    simonLevel++;
+    document.getElementById('simonLevel').textContent = simonLevel;
+    simonSequence.push(Math.floor(Math.random() * 4));
+    simonPlayerIdx = 0; simonLocked = true; simonPlaying = true;
+    document.getElementById('simonMsg').textContent = '👀 Regarde…';
+    let i = 0;
+    const interval = setInterval(() => {
+        if (i >= simonSequence.length) {
+            clearInterval(interval); simonPlaying = false; simonLocked = false;
+            document.getElementById('simonMsg').textContent = '🎯 À toi!';
+            return;
+        }
+        const el = document.getElementById('simon' + simonSequence[i]);
+        el.classList.add('simon-lit');
+        setTimeout(() => el.classList.remove('simon-lit'), 350);
+        i++;
+    }, 600);
+}
+function simonClick(idx) {
+    if (simonLocked || simonPlaying) return;
+    const el = document.getElementById('simon' + idx);
+    el.classList.add('simon-lit');
+    setTimeout(() => el.classList.remove('simon-lit'), 200);
+    if (idx !== simonSequence[simonPlayerIdx]) {
+        document.getElementById('simonMsg').textContent = '💥 Perdu! Niveau ' + simonLevel;
+        simonLocked = true; return;
+    }
+    simonPlayerIdx++;
+    if (simonPlayerIdx >= simonSequence.length) {
+        document.getElementById('simonMsg').textContent = '✅ Niveau ' + simonLevel + '!';
+        simonLocked = true;
+        setTimeout(simonNextRound, 800);
+    }
+}
+
+// ─── SNAKE ─────────────────────────────────────────
+let snake, snakeDirCurrent, snakeNextDir, snakeFood, snakeScoreVal, snakeGameOver, snakeInterval;
+const snakeCanvas = document.getElementById('snakeCanvas');
+const snakeCtx = snakeCanvas.getContext('2d');
+
+function snakeReset() {
+    clearInterval(snakeInterval);
+    snake = [{x:7,y:7},{x:6,y:7},{x:5,y:7}];
+    snakeDirCurrent = 'right'; snakeNextDir = 'right';
+    snakeScoreVal = 0; snakeGameOver = false;
+    document.getElementById('snakeScore').textContent = '0';
+    snakePlaceFood(); snakeDraw();
+    snakeInterval = setInterval(snakeTick, 150);
+}
+function snakePlaceFood() {
+    let free = false;
+    while (!free) {
+        snakeFood = {x:Math.floor(Math.random()*15), y:Math.floor(Math.random()*15)};
+        free = !snake.some(s => s.x===snakeFood.x && s.y===snakeFood.y);
+    }
+}
+function snakeDraw() {
+    snakeCtx.fillStyle = '#1a1e2a'; snakeCtx.fillRect(0,0,300,300);
+    snake.forEach((seg,i) => {
+        snakeCtx.fillStyle = i === 0 ? '#30d158' : '#28a745';
+        snakeCtx.fillRect(seg.x*20+1, seg.y*20+1, 18, 18);
+        if (i === 0) {
+            snakeCtx.fillStyle = '#fff';
+            snakeCtx.beginPath(); snakeCtx.arc(seg.x*20+12, seg.y*20+6, 2.5, 0, Math.PI*2); snakeCtx.fill();
+            snakeCtx.beginPath(); snakeCtx.arc(seg.x*20+6, seg.y*20+6, 2.5, 0, Math.PI*2); snakeCtx.fill();
+        }
+    });
+    snakeCtx.fillStyle = '#ff453a';
+    snakeCtx.beginPath(); snakeCtx.arc(snakeFood.x*20+10, snakeFood.y*20+10, 7, 0, Math.PI*2); snakeCtx.fill();
+}
+function snakeTick() {
+    if (snakeGameOver) return;
+    snakeDirCurrent = snakeNextDir;
+    const head = {x:snake[0].x, y:snake[0].y};
+    if (snakeDirCurrent === 'right') head.x++;
+    else if (snakeDirCurrent === 'left') head.x--;
+    else if (snakeDirCurrent === 'down') head.y++;
+    else if (snakeDirCurrent === 'up') head.y--;
+    if (head.x < 0 || head.x >= 15 || head.y < 0 || head.y >= 15) {
+        snakeGameOver = true; clearInterval(snakeInterval); snakeDraw();
+        document.getElementById('snakeMsg').textContent = '💥 Perdu!'; return;
+    }
+    if (snake.some(s => s.x===head.x && s.y===head.y)) {
+        snakeGameOver = true; clearInterval(snakeInterval); snakeDraw();
+        document.getElementById('snakeMsg').textContent = '💥 Perdu!'; return;
+    }
+    snake.unshift(head);
+    if (head.x === snakeFood.x && head.y === snakeFood.y) {
+        snakeScoreVal += 10;
+        document.getElementById('snakeScore').textContent = snakeScoreVal;
+        snakePlaceFood();
+    } else snake.pop();
+    snakeDraw();
+}
+function snakeDir(dir) {
+    if (snakeGameOver) return;
+    const opposites = {up:'down',down:'up',left:'right',right:'left'};
+    if (opposites[dir] !== snakeDirCurrent) snakeNextDir = dir;
+}
+document.addEventListener('keydown', (e) => {
+    const m = {ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',z:'up',s:'down',q:'left',d:'right'};
+    if (m[e.key]) { e.preventDefault(); snakeDir(m[e.key]); }
+});
+// snakeMsg element
+const snakeMsgDiv = document.createElement('div');
+snakeMsgDiv.id = 'snakeMsg';
+snakeMsgDiv.style.cssText = 'color:#ff453a;font-weight:600;margin-top:6px;min-height:24px;font-size:14px';
+document.querySelector('#snakeApp .snake-controls').after(snakeMsgDiv);
+snakeReset();
+
+// ─── CLOCK APP ───────────────────────────────────────
+function startStopwatch() { alert('⏱️ Chronomètre démarré !'); }
+function setAlarm() { alert('⏰ Alarme réglée sur 07:00'); }
+function refreshWeather() { alert('☀️ Météo mise à jour !\nParis: 22°C, Ensoleillé'); }
+
+</script>
+
+</body>
+</html>                                                                                                                                   
