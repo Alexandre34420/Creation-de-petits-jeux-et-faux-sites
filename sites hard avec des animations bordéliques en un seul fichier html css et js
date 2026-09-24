@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ANOMALIE NUMÉRIQUE — ULTRA HARDCORE CHAOS</title>
+
+<!-- Fonts (many, chaotic mix) -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================
+   BASE CHAOS
+   =========================== */
+:root{
+  --neon-red: #ff0055;
+  --neon-green: #00ff66;
+  --neon-blue: #00d4ff;
+  --neon-violet: #b300ff;
+  --toxic-yellow: #ffd400;
+  --toxic-orange: #ff6a00;
+  --bg1: #070007;
+  --bg2: #0b0011;
+  --crt: rgba(255,255,255,0.03);
+  --glow: 0 0 18px rgba(255,0,150,0.25);
+}
+
+/* full-bleed chaos */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0;overflow:hidden;background:linear-gradient(120deg,var(--bg1),var(--bg2));color:#fff}
+body{font-family:system-ui, "Orbitron", "Press Start 2P", monospace; -webkit-font-smoothing:antialiased;}
+
+/* overlay layers for depth */
+.layer{
+  position:fixed;inset:0;pointer-events:none;mix-blend-mode:screen;z-index:0;
+}
+
+/* VHS scanlines */
+.layer.scanlines{
+  background-image:linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size:100% 3px;
+  opacity:0.6;
+  mix-blend-mode:overlay;
+  z-index:1;
+}
+
+/* CRT noise */
+.layer.noise{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4" fill="%23000000" opacity="0.02"/></svg>');opacity:0.6;z-index:2}
+
+/* matrix rain */
+.canvas-rain{position:fixed;inset:0;z-index:3;pointer-events:none;mix-blend-mode:screen;opacity:0.9}
+
+/* main container (scrollable chaotic area) */
+#main{
+  position:relative;z-index:10;height:100vh;overflow:auto;
+  transform-origin:center center;
+  perspective:1200px;
+}
+
+/* header - corrupted */
+.header{
+  position:sticky;top:0;z-index:40;padding:12px 18px;background:linear-gradient(90deg,rgba(0,0,0,0.6),rgba(255,255,255,0.02));
+  display:flex;gap:12px;align-items:center;border-bottom:2px dashed rgba(255,255,255,0.06);
+}
+.brand{
+  font-weight:900;font-size:18px;letter-spacing:1px;color:var(--neon-red);
+  text-shadow:0 0 8px var(--neon-red), 0 0 24px rgba(255,0,100,0.12);
+}
+.controls{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{
+  background:linear-gradient(90deg,rgba(255,255,255,0.06),rgba(0,0,0,0.2));
+  border:2px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:6px;color:#fff;cursor:pointer;font-weight:800;
+  box-shadow:0 6px 18px rgba(0,0,0,0.6);
+}
+
+/* chaotic grid of panels */
+.grid{
+  display:grid;grid-template-columns:repeat(12,1fr);gap:12px;padding:18px;
+  transform-origin:center center;
+}
+
+/* panels - brutalist and corrupted */
+.panel{
+  grid-column:span 4;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.2));
+  padding:12px;border:3px solid rgba(255,255,255,0.06);border-radius:6px;min-height:160px;position:relative;overflow:hidden;
+  box-shadow:0 12px 40px rgba(0,0,0,0.6);
+  transform:translateZ(0);
+}
+
+/* titles */
+.panel h3{margin:0 0 8px;font-size:14px;color:var(--neon-blue);text-shadow:0 0 8px rgba(0,212,255,0.2)}
+
+/* glitch text */
+.glitch{
+  position:relative;display:inline-block;font-weight:900;
+}
+.glitch::before,.glitch::after{
+  content:attr(data-text);position:absolute;left:0;top:0;mix-blend-mode:screen;opacity:0.8;
+}
+.glitch::before{color:var(--neon-red);transform:translate(-2px,-2px);clip-path:inset(0 0 50% 0)}
+.glitch::after{color:var(--neon-green);transform:translate(2px,2px);clip-path:inset(50% 0 0 0)}
+
+/* floating windows (draggable) */
+.win{
+  position:fixed;background:#0b0b0b;border:4px solid #00ff66;padding:8px;color:#000;z-index:60;
+  width:320px;height:180px;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,0.8);
+  font-family:"VT323", monospace;font-size:13px;
+}
+.win .title{background:#000;color:#0ff;padding:6px;font-weight:900;margin:-8px -8px 8px -8px;border-bottom:2px solid rgba(255,255,255,0.04)}
+.win .close{position:absolute;right:6px;top:6px;background:#ff0066;color:#fff;border:none;padding:4px 6px;cursor:pointer}
+
+/* terminal fake */
+.terminal{background:#000;color:#0f0;padding:8px;border-radius:4px;font-family:"Share Tech Mono", monospace;font-size:12px;line-height:1.4;box-shadow:inset 0 0 40px rgba(0,255,0,0.02)}
+
+/* memes (floating) */
+.meme{
+  position:absolute;z-index:50;pointer-events:none;mix-blend-mode:screen;border-radius:8px;border:2px solid rgba(255,255,255,0.06);
+  box-shadow:0 12px 40px rgba(0,0,0,0.6);
+}
+
+/* bouncing class */
+.bounce{animation:bounce 2.2s infinite cubic-bezier(.2,.8,.2,1)}
+@keyframes bounce{0%{transform:translateY(0)}50%{transform:translateY(-160px)}100%{transform:translateY(0)}}
+
+/* strobe overlay */
+.strobe{position:fixed;inset:0;z-index:100;pointer-events:none;mix-blend-mode:overlay;opacity:0.0;background:linear-gradient(90deg,rgba(255,0,0,0.08),rgba(0,255,0,0.08),rgba(0,0,255,0.08));animation:strobe 0.12s infinite}
+@keyframes strobe{0%{opacity:0}50%{opacity:0.6}100%{opacity:0}}
+
+/* fake blue screen */
+.bsod{
+  position:fixed;inset:0;background:#001a33;color:#fff;display:flex;align-items:center;justify-content:center;z-index:9999;font-family:monospace;font-size:18px;flex-direction:column;display:none;
+}
+
+/* cursor weirdness */
+body.cursor-weird, body.cursor-weird *{cursor:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="8" fill="%23ff00ff"/></svg>') 16 16, auto}
+
+/* marquee of warnings */
+.warn-strip{position:fixed;top:0;left:0;right:0;height:28px;background:#000;color:#ff0;display:flex;align-items:center;padding:0 12px;z-index:120;font-weight:900;letter-spacing:1px}
+.warn-strip .blink{animation:blink 0.6s steps(2) infinite}
+@keyframes blink{0%{opacity:1}50%{opacity:0}100%{opacity:1}}
+
+/* secret zone (hidden) */
+.secret{position:fixed;right:-40%;top:20%;width:40%;height:60%;background:linear-gradient(90deg,#000,#111);border-left:6px solid #ff00aa;z-index:80;overflow:auto;padding:12px;transform:skewX(-6deg)}
+
+/* tiny chaotic footer */
+.footer{
+  position:fixed;left:0;bottom:0;right:0;height:40px;background:linear-gradient(90deg,#000,#111);display:flex;align-items:center;padding:6px 12px;z-index:110;
+  gap:12px;color:#0f0;font-weight:900;font-family:VT323, monospace;
+}
+
+/* random rotated text blocks */
+.rot{
+  transform:rotate(-12deg);
+  font-size:22px;
+  color:var(--toxic-yellow);
+  text-shadow:0 0 8px rgba(255,200,0,0.6);
+}
+
+/* responsive fallback */
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(6,1fr)}
+  .panel{grid-column:span 6}
+}
+</style>
+</head>
+<body>
+
+<!-- layers -->
+<div class="layer scanlines"></div>
+<div class="layer noise"></div>
+<canvas class="canvas-rain" id="matrix"></canvas>
+<div class="strobe" id="strobe"></div>
+
+<!-- header -->
+<div class="header">
+  <div class="brand glitch" data-text="ANOMALIE">ANOMALIE</div>
+  <div class="controls">
+    <button class="btn" id="btn-spawn">SPAWN</button>
+    <button class="btn" id="btn-pop">POPUP</button>
+    <button class="btn" id="btn-explode">EXPLODE</button>
+    <button class="btn" id="btn-bsod">BSOD</button>
+    <button class="btn" id="btn-weird">CURSOR</button>
+    <button class="btn" id="btn-full">FULL</button>
+  </div>
+</div>
+
+<!-- main chaotic scroll area -->
+<div id="main">
+  <div class="grid" id="grid">
+    <!-- many panels to create info overload -->
+    <div class="panel"><h3 class="glitch" data-text="TERMINAL">TERMINAL</h3>
+      <div class="terminal" id="term1"></div>
+    </div>
+
+    <div class="panel"><h3 class="glitch" data-text="LOGS">LOGS</h3>
+      <div id="logs" style="height:120px;overflow:auto;font-size:12px"></div>
+    </div>
+
+    <div class="panel"><h3 class="glitch" data-text="RADAR">RADAR</h3>
+      <canvas id="radar" width="300" height="160" style="width:100%;height:120px"></canvas>
+    </div>
+
+    <div class="panel"><h3 class="glitch" data-text="MEMES">MEMES</h3>
+      <div id="meme-area" style="position:relative;height:120px"></div>
+    </div>
+
+    <div class="panel"><h3 class="glitch" data-text="STATS">STATS</h3>
+      <div id="stats" style="font-size:12px"></div>
+    </div>
+
+    <div class="panel"><h3 class="glitch" data-text="CHAT">CHAT</h3>
+      <div id="chat" style="height:120px;overflow:auto;font-size:12px"></div>
+    </div>
+
+    <!-- repeat to overload -->
+    <div class="panel"><h3 class="glitch" data-text="FILES">FILES</h3><div id="files" style="font-size:12px"></div></div>
+    <div class="panel"><h3 class="glitch" data-text="NETWORK">NETWORK</h3><div id="network" style="font-size:12px"></div></div>
+    <div class="panel"><h3 class="glitch" data-text="AUDIO">AUDIO</h3><div id="audioArea" style="height:120px"></div></div>
+  </div>
+</div>
+
+<!-- secret skewed panel -->
+<div class="secret" id="secret" style="display:none">
+  <div style="font-weight:900;color:#0ff;font-size:18px">ZONE INTERDITE</div>
+  <pre id="secretLog" style="color:#0f0"></pre>
+</div>
+
+<!-- footer -->
+<div class="footer">
+  <div id="ticker">SYSTEM: BOOT CHAOS — GPU OVERLOAD — RAVE MODE</div>
+  <div style="margin-left:auto">ULTRA HARDCORE — DO NOT TRUST</div>
+</div>
+
+<!-- BSOD overlay -->
+<div class="bsod" id="bsod">
+  <div>*** CRITICAL SYSTEM FAILURE ***</div>
+  <div style="margin-top:12px;font-size:14px">Kernel panic: anomaly detected. Reboot impossible.</div>
+  <div style="margin-top:18px;font-size:12px;color:#ff0">Press any key to attempt recovery (fake)</div>
+</div>
+
+<!-- audio elements (short loops, may be blocked by browser) -->
+<audio id="snd-glitch" src="https://cdn.jsdelivr.net/gh/jvilk/BrowserFS@master/examples/sounds/bleep.mp3" preload="auto"></audio>
+<audio id="snd-bass" src="https://cdn.jsdelivr.net/gh/terkelg/awesome-creative-coding@master/sounds/boom.mp3" preload="auto"></audio>
+
+<script>
+/* ===========================
+   ULTRA CHAOS SCRIPT
+   Single-file, no external libs required
+   =========================== */
+
+/* Utilities */
+const rand = (a,b)=> Math.random()*(b-a)+a;
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const clamp = (v,a,b)=> Math.max(a,Math.min(b,v));
+
+/* Canvas matrix rain */
+const matrix = document.getElementById('matrix');
+const mctx = matrix.getContext('2d');
+let W = matrix.width = innerWidth;
+let H = matrix.height = innerHeight;
+const cols = Math.floor(W/14);
+const drops = Array(cols).fill(0);
+function matrixLoop(){
+  mctx.fillStyle = 'rgba(0,0,0,0.12)';
+  mctx.fillRect(0,0,W,H);
+  mctx.fillStyle = 'rgba(0,255,70,0.9)';
+  mctx.font = '14px monospace';
+  for(let i=0;i<cols;i++){
+    const text = String.fromCharCode(0x30A0 + Math.random()*96);
+    mctx.fillText(text, i*14, drops[i]*14);
+    if(drops[i]*14 > H && Math.random() > 0.975) drops[i]=0;
+    drops[i]++;
+  }
+  requestAnimationFrame(matrixLoop);
+}
+matrixLoop();
+
+/* Radar canvas */
+const radar = document.getElementById('radar');
+const rctx = radar.getContext('2d');
+function drawRadar(){
+  rctx.clearRect(0,0,radar.width,radar.height);
+  rctx.fillStyle = '#001';
+  rctx.fillRect(0,0,radar.width,radar.height);
+  rctx.strokeStyle = 'rgba(0,255,150,0.6)';
+  rctx.lineWidth = 1;
+  for(let i=0;i<4;i++){
+    rctx.beginPath();
+    rctx.arc(radar.width/2, radar.height/2, (i+1)*(radar.height/8), 0, Math.PI*2);
+    rctx.stroke();
+  }
+  // sweep
+  const t = Date.now()/200;
+  rctx.fillStyle = 'rgba(0,255,150,0.08)';
+  rctx.beginPath();
+  rctx.moveTo(radar.width/2, radar.height/2);
+  rctx.arc(radar.width/2, radar.height/2, radar.height/2, t% (Math.PI*2), (t+0.6) % (Math.PI*2));
+  rctx.closePath();
+  rctx.fill();
+  requestAnimationFrame(drawRadar);
+}
+drawRadar();
+
+/* Terminal fake output */
+const term = document.getElementById('term1');
+function termWrite(line){
+  const p = document.createElement('div');
+  p.textContent = line;
+  term.appendChild(p);
+  term.scrollTop = term.scrollHeight;
+}
+setInterval(()=> {
+  const msgs = [
+    "INIT: /dev/chaos mounted",
+    "SCAN: malware? unknown",
+    "AI: heartbeat unstable",
+    "NET: packet flood detected",
+    "GPU: temp rising",
+    "LOG: user input corrupted",
+    "SEC: fake antivirus engaged",
+    "ERR: 0xDEADBEEF"
+  ];
+  termWrite('> ' + pick(msgs) + '  ['+new Date().toLocaleTimeString()+']');
+}, 600);
+
+/* Logs area */
+const logs = document.getElementById('logs');
+function log(msg){
+  const d = document.createElement('div');
+  d.textContent = '['+new Date().toLocaleTimeString()+'] ' + msg;
+  logs.appendChild(d);
+  logs.scrollTop = logs.scrollHeight;
+}
+setInterval(()=> log(pick(['INTRUSION','PING','SYN','ACK','GLITCH','RAVE','SYNTH','BOOT','CRASH','REBOOT'])), 800);
+
+/* Stats */
+const stats = document.getElementById('stats');
+function updateStats(){
+  stats.innerHTML = `
+    CPU: ${(rand(20,99)|0)}% &nbsp; GPU: ${(rand(40,100)|0)}% &nbsp; MEM: ${(rand(10,99)|0)}% <br>
+    PACKETS: ${(rand(1000,99999)|0)} &nbsp; NODES: ${(rand(1,999)|0)} &nbsp; ERR: ${(rand(0,999)|0)}
+  `;
+}
+setInterval(updateStats, 400);
+
+/* Chat spam */
+const chat = document.getElementById('chat');
+function chatSpam(){
+  const m = document.createElement('div');
+  m.textContent = pick(['hey','lol','glitch','virus','rave','boom','wtf','hax','bruh','omg','!','?','404','ping']);
+  m.style.color = `hsl(${rand(0,360)},100%,60%)`;
+  chat.appendChild(m);
+  chat.scrollTop = chat.scrollHeight;
+}
+setInterval(chatSpam, 300);
+
+/* Files & network fake */
+const files = document.getElementById('files');
+const network = document.getElementById('network');
+function fakeFiles(){
+  files.innerHTML = '';
+  for(let i=0;i<6;i++){
+    const f = document.createElement('div');
+    f.textContent = `C:\\SYSTEM\\${pick(['core','meme','rave','ai','boot','virus'])}_${(rand(100,999)|0)}.SYS`;
+    f.style.color = `hsl(${rand(0,360)},100%,60%)`;
+    files.appendChild(f);
+  }
+}
+function fakeNet(){
+  network.innerHTML = '';
+  for(let i=0;i<6;i++){
+    const n = document.createElement('div');
+    n.textContent = `${pick(['192.168','10.0','172.16'])}.${(rand(0,255)|0)}.${(rand(0,255)|0)} - ${pick(['ALIVE','SUS','RAVE','BOT','SPAM'])}`;
+    n.style.color = `hsl(${rand(0,360)},100%,60%)`;
+    network.appendChild(n);
+  }
+}
+setInterval(fakeFiles, 2000);
+setInterval(fakeNet, 1800);
+
+/* Meme area - spawn random images */
+const memeArea = document.getElementById('meme-area');
+const MEME_URLS = [
+  "https://i.imgur.com/4AiXzf8.jpeg",
+  "https://i.imgur.com/8QfQFzG.png",
+  "https://i.imgur.com/1Q9Z1ZC.png",
+  "https://i.imgur.com/0rVeh4P.jpeg",
+  "https://i.imgur.com/9Q8QF1M.jpeg",
+  "https://i.imgur.com/4M7IWwP.png",
+  "https://i.imgur.com/6YV2Z8y.jpeg",
+  "https://i.imgur.com/3GvwNBf.png",
+  "https://i.imgur.com/2yaf2wb.jpeg"
+];
+function spawnMeme(x,y,w,opts={}){
+  const img = document.createElement('img');
+  img.src = pick(MEME_URLS);
+  img.className = 'meme';
+  img.style.left = (x ?? rand(0, innerWidth-160)) + 'px';
+  img.style.top = (y ?? rand(80, innerHeight-200)) + 'px';
+  img.style.width = (w ?? rand(60,260)) + 'px';
+  img.style.opacity = 0.95;
+  img.style.transform = `rotate(${rand(-45,45)}deg)`;
+  if(opts.bounce) img.classList.add('bounce');
+  document.body.appendChild(img);
+
+  // random speech
+  if(Math.random() < 0.6){
+    setTimeout(()=> speak(img, pick(RANDOM_TEXTS)), rand(200,1200));
+  }
+
+  // auto remove sometimes
+  if(Math.random() < 0.08){
+    setTimeout(()=> { if(img.parentNode) img.remove(); }, rand(3000,15000));
+  }
+  return img;
+}
+
+/* Random texts for speech */
+const RANDOM_TEXTS = ["LOL","BRUH","WTF","GLITCH","ERROR","RAVE","BOOM","HAX","XD","NOPE","FATAL","SYS","AI: RUN"];
+
+/* speak bubble */
+function speak(el, text){
+  const rect = el.getBoundingClientRect();
+  const b = document.createElement('div');
+  b.className = 'bubble';
+  b.textContent = text;
+  b.style.left = (rect.left + rect.width/2) + 'px';
+  b.style.top = (rect.top) + 'px';
+  b.style.background = `hsl(${rand(0,360)},100%,30%)`;
+  document.body.appendChild(b);
+  setTimeout(()=> b.remove(), 1200);
+}
+
+/* Particle explosions */
+const particles = [];
+function spawnExplosion(x,y,count=40){
+  for(let i=0;i<count;i++){
+    particles.push({
+      x, y,
+      vx: rand(-6,6),
+      vy: rand(-6,6),
+      life: rand(40,120),
+      size: rand(2,10),
+      hue: rand(0,360)
+    });
+  }
+}
+function particleStep(){
+  const ctx = ctxParticles;
+  ctx.clearRect(0,0,W,H);
+  for(let i=particles.length-1;i>=0;i--){
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy;
+    p.vy += 0.12;
+    p.life--;
+    ctx.fillStyle = `hsla(${p.hue},100%,60%,${p.life/120})`;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fill();
+    if(p.life <= 0) particles.splice(i,1);
+  }
+}
+
+/* particle canvas */
+const pCanvas = document.createElement('canvas');
+pCanvas.id = 'pCanvas';
+pCanvas.style.position = 'fixed';
+pCanvas.style.left = '0';
+pCanvas.style.top = '0';
+pCanvas.style.zIndex = 25;
+pCanvas.style.pointerEvents = 'none';
+document.body.appendChild(pCanvas);
+const ctxParticles = pCanvas.getContext('2d');
+function resizeCanvas(){ W = matrix.width = innerWidth; H = matrix.height = innerHeight; pCanvas.width = W; pCanvas.height = H; }
+addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+/* Cursor clones & weird cursor */
+let mouseX = innerWidth/2, mouseY = innerHeight/2;
+document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+function spawnCursorClone(x,y){
+  const c = document.createElement('div');
+  c.style.position='fixed'; c.style.left=(x-8)+'px'; c.style.top=(y-8)+'px';
+  c.style.width = c.style.height = (6+rand(6,36))+'px';
+  c.style.borderRadius='50%';
+  c.style.background = `hsl(${rand(0,360)},100%,60%)`;
+  c.style.zIndex = 90; c.style.pointerEvents='none'; c.style.mixBlendMode='screen';
+  document.body.appendChild(c);
+  setTimeout(()=> c.remove(), 1200);
+}
+
+/* Windows popups */
+function spawnWindow(){
+  const w = document.createElement('div');
+  w.className = 'win';
+  w.style.left = rand(20, innerWidth-360)+'px';
+  w.style.top = rand(40, innerHeight-240)+'px';
+  w.innerHTML = `<div class="title">SYSTEM ALERT</div>
+    <div>Process ${Math.floor(rand(1000,9999))} failed to respond.<br>Attempting forced restart...</div>
+    <button onclick="this.parentNode.remove()">ACK</button>`;
+  document.body.appendChild(w);
+  setTimeout(()=> { if(w.parentNode) w.remove(); }, rand(3000,12000));
+}
+
+/* fake BSOD */
+const bsod = document.getElementById('bsod');
+function showBSOD(){
+  bsod.style.display = 'flex';
+  setTimeout(()=> { bsod.style.display = 'none'; }, rand(2000,8000));
+}
+
+/* strobe control */
+const strobe = document.getElementById('strobe');
+function flashStrobe(){
+  strobe.style.opacity = 1;
+  setTimeout(()=> strobe.style.opacity = 0, 120);
+}
+
+/* spawn many chaotic things */
+function fullChaosBurst(){
+  for(let i=0;i<12;i++){
+    spawnMeme(rand(0,innerWidth-200), rand(80,innerHeight-200), rand(40,260), {bounce: Math.random()<0.6});
+    if(Math.random() < 0.6) spawnWindow();
+    if(Math.random() < 0.6) spawnExplosion(rand(0,innerWidth), rand(0,innerHeight), Math.floor(rand(8,60)));
+    if(Math.random() < 0.6) spawnCursorClone(rand(0,innerWidth), rand(0,innerHeight));
+  }
+  flashStrobe();
+}
+
+/* periodic chaos */
+setInterval(()=> {
+  if(Math.random() < 0.6) spawnMeme();
+  if(Math.random() < 0.4) spawnWindow();
+  if(Math.random() < 0.5) spawnExplosion(rand(0,innerWidth), rand(0,innerHeight), Math.floor(rand(6,40)));
+  if(Math.random() < 0.3) spawnCursorClone(mouseX, mouseY);
+  if(Math.random() < 0.05) showBSOD();
+}, 700);
+
+/* spawn initial memes */
+for(let i=0;i<10;i++) spawnMeme();
+
+/* particle loop */
+function particleLoop(){
+  particleStep();
+  requestAnimationFrame(particleLoop);
+}
+particleLoop();
+
+/* physics loop for bouncing memes */
+setInterval(()=> {
+  document.querySelectorAll('.meme').forEach(m => {
+    if(m.classList.contains('bounce')){
+      let x = parseFloat(m.style.left);
+      let y = parseFloat(m.style.top);
+      let vx = (m._vx ?? rand(-3,3));
+      let vy = (m._vy ?? rand(-3,3));
+      vy += 0.18;
+      x += vx; y += vy;
+      const w = parseFloat(m.style.width) || 120;
+      if(x < -50){ x = -50; vx = -vx * (0.7+Math.random()*0.6); }
+      if(x + w > innerWidth+50){ x = innerWidth - w + 50; vx = -vx * (0.7+Math.random()*0.6); }
+      if(y < -50){ y = -50; vy = -vy * (0.7+Math.random()*0.6); }
+      if(y + w > innerHeight+50){ y = innerHeight - w + 50; vy = -vy * (0.6+Math.random()*0.6); }
+      m.style.left = x + 'px';
+      m.style.top = y + 'px';
+      m._vx = vx; m._vy = vy;
+      m.style.transform = `rotate(${vx*8}deg)`;
+    } else {
+      // drift
+      m.style.left = (parseFloat(m.style.left) + (m._vx ?? 0.2)) + 'px';
+      m.style.top = (parseFloat(m.style.top) + (m._vy ?? 0.1)) + 'px';
+    }
+  });
+}, 40);
+
+/* controls */
+document.getElementById('btn-spawn').addEventListener('click', ()=> spawnMeme(mouseX, mouseY, rand(60,220), {bounce: true}));
+document.getElementById('btn-pop').addEventListener('click', ()=> spawnWindow());
+document.getElementById('btn-explode').addEventListener('click', ()=> spawnExplosion(mouseX, mouseY, 80));
+document.getElementById('btn-bsod').addEventListener('click', ()=> showBSOD());
+document.getElementById('btn-weird').addEventListener('click', ()=> {
+  document.body.classList.toggle('cursor-weird');
+  logTicker('CURSOR WEIRD TOGGLE');
+});
+document.getElementById('btn-full').addEventListener('click', ()=> {
+  // massive burst + audio + strobe
+  fullChaosBurst();
+  playSound('snd-glitch');
+  playSound('snd-bass');
+  document.getElementById('strobe').style.animationDuration = '0.06s';
+  setTimeout(()=> document.getElementById('strobe').style.animationDuration = '0.12s', 6000);
+});
+
+/* audio play helper (may be blocked by browser) */
+function playSound(id){
+  try{
+    const s = document.getElementById(id);
+    if(s){ s.currentTime = 0; s.volume = 0.6; s.play().catch(()=>{}); }
+  }catch(e){}
+}
+
+/* spawn cursor clones on click */
+document.addEventListener('click', e => {
+  for(let i=0;i<6;i++) spawnCursorClone(e.clientX + rand(-80,80), e.clientY + rand(-80,80));
+  spawnMeme(e.clientX + rand(-40,40), e.clientY + rand(-40,40), rand(60,220), {bounce: Math.random()<0.6});
+  spawnExplosion(e.clientX, e.clientY, Math.floor(rand(8,40)));
+  playSound('snd-glitch');
+});
+
+/* ticker log */
+const ticker = document.getElementById('ticker');
+function logTicker(msg){
+  ticker.textContent = 'SYSTEM: ' + msg + ' — ' + new Date().toLocaleTimeString();
+}
+setInterval(()=> logTicker(pick(['RAVE','GLITCH','AI','VIRUS','BOOT','RUNTIME','OVERCLOCK','SYN','SPAM','RAVE MODE'])), 1200);
+
+/* secret zone activation (Konami-like) */
+let secretSeq = [];
+const secretCode = [38,38,40,40,37,39,37,39,66,65];
+document.addEventListener('keydown', e => {
+  secretSeq.push(e.keyCode);
+  if(secretSeq.slice(-secretCode.length).join(',') === secretCode.join(',')){
+    document.getElementById('secret').style.display = 'block';
+    document.getElementById('secretLog').textContent = 'ACCESS GRANTED\n' + Array.from({length:30}).map(()=> Math.random().toString(36).slice(2)).join('\n');
+    for(let i=0;i<40;i++) spawnMeme(rand(0,innerWidth), rand(0,innerHeight), rand(40,260), {bounce:true});
+    spawnExplosion(innerWidth/2, innerHeight/2, 200);
+  }
+});
+
+/* random CSS injection for extra visual corruption */
+function injectCSSChaos(){
+  const s = document.createElement('style');
+  s.textContent = `
+    body{filter:contrast(${rand(0.6,2).toFixed(2)}) saturate(${rand(0.6,3).toFixed(2)}) hue-rotate(${rand(-180,180)|0}deg) !important}
+    .panel{border-color: hsl(${rand(0,360)|0},100%,60%) !important; transform: translate(${rand(-20,20)|0}px, ${rand(-20,20)|0}px) rotate(${rand(-6,6)|0}deg) !important}
+    .glitch::before{transform:translate(${rand(-6,6)|0}px,${rand(-6,6)|0}px)}
+    .glitch::after{transform:translate(${rand(-6,6)|0}px,${rand(-6,6)|0}px)}
+  `;
+  document.head.appendChild(s);
+  setTimeout(()=> s.remove(), 4000);
+}
+setInterval(()=> { if(Math.random() < 0.3) injectCSSChaos(); }, 1500);
+
+/* tiny performance guard: remove oldest memes if too many */
+setInterval(()=> {
+  const memes = document.querySelectorAll('.meme');
+  if(memes.length > 220){
+    for(let i=0;i<60;i++) if(memes[i]) memes[i].remove();
+  }
+}, 2000);
+
+/* initial random spawn */
+for(let i=0;i<40;i++){
+  spawnMeme(rand(0,innerWidth), rand(80,innerHeight-200), rand(40,260), {bounce: Math.random()<0.6});
+  if(Math.random() < 0.2) spawnWindow();
+}
+
+/* final: tiny animation to make page feel alive */
+setInterval(()=> {
+  document.querySelectorAll('.glitch').forEach(g => {
+    g.style.opacity = (Math.random()*0.6 + 0.4).toFixed(2);
+    g.style.transform = `translateX(${rand(-6,6)|0}px)`;
+  });
+}, 120);
+
+/* safety note: user asked for extreme chaos; this intentionally creates heavy animations and audio. */
+</script>
+</body>
+</html>
